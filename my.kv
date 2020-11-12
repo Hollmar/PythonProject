@@ -1,0 +1,194 @@
+WindowManager:
+    RoomManager:
+    DeviceManager:
+    BrightnessSensor:
+
+<RoomManager>:
+    name: "rooms"
+    canvas.before:
+        Color:
+            rgba: 0.4,0.65,0.85,1
+        Rectangle:
+            pos: 0,root.height*0.875
+            size: root.width,root.height/8
+    FloatLayout:
+        size: root.width, root.height
+        Image:
+            source:'images\house.png'
+            size_hint_x:0.05
+            pos_hint:{"x":0.9,"y":0.44}
+        Label:
+            text: "Building"
+            color: 1,1,1,1
+            pos_hint:{"x":0,"y":0.45}
+            font_size: 20
+        StackLayout:
+            id:stack_layout
+            orientation: 'lr-tb'
+            spacing: 20,20
+            padding: root.width*0.1,root.height*0.3,root.width*0.1,0
+
+            Button:
+                id:add_button
+                font_size:35
+                size_hint: 0.2, 0.25
+                text: "+"
+                on_release: root.create_room_show()
+        Label:
+            id: bottom_label
+            color: 0,0,0,1
+            pos_hint:{"x":0,"y":-0.45}
+            font_size: 25
+            text: "No Rooms set yet"
+
+
+<DeviceManager>:
+    name: "devices"
+    canvas.before:
+        Color:
+            rgba: 0.4,0.65,0.85,1
+        Rectangle:
+            pos: 0,root.height*0.875
+            size: root.width,root.height/8
+    FloatLayout:
+        size: root.width, root.height
+        Label:
+            id: label1
+            color: 1,1,1,1
+            pos_hint:{"x":0,"y":0.45}
+            font_size: 25
+        Image:
+            source:'images\couch.png'
+            size_hint_x:0.05
+            pos_hint:{"x":0.9,"y":0.44}
+        StackLayout:
+            id:stack_layout
+            orientation: 'lr-tb'
+            spacing: 20,20
+            padding: root.width*0.1,root.height*0.3,root.width*0.1,0
+            Button:
+                id:add_button
+                font_size:30
+                size_hint: 0.2, 0.25
+                text: "+"
+                on_release: root.add_device_show()
+        Button:
+            pos_hint:{"x":0,"y":0}
+            font_size:30
+            size_hint: 0.2, 0.2
+            #background_normal: 'images\go_back.png'
+            text: "Go Back"
+            on_release:
+                app.root.current = "rooms"
+                root.manager.transition.direction = "right"
+        Button:
+            font_size:30
+            pos_hint:{"x":0.8,"y":0}
+            size_hint: 0.2, 0.2
+            text: "Delete"
+            pos:0,root.height*-0.4
+            on_release:
+                root.delete_room_show()
+
+<BrightnessSensor>:
+    name: "brightness"
+    canvas.before:
+        Color:
+            rgba: 0.4,0.65,0.85,1
+        Rectangle:
+            pos: 0,root.height*0.875
+            size: root.width,root.height/8
+    FloatLayout:
+        size: root.width, root.height
+        Label:
+            id: label1
+            color: 1,1,1,1
+            pos_hint:{"x":0,"y":0.45}
+            font_size: 25
+        Label:
+            id: label2
+            color: 0,0,0,1
+            pos_hint:{"x":0,"y":0}
+            text: "Current brightness: (here could be your ad)"
+            font_size: 25
+        Label:
+            id: label3
+            color: 0,0,0,1
+            pos_hint: {"x":0, "y":-0.4}
+            font_size:25
+        Image:
+            source:'images\sun.png'
+            size_hint_x:0.05
+            pos_hint:{"x":0.9,"y":0.44}
+        Button:
+            pos_hint:{"x":0,"y":0}
+            font_size:30
+            size_hint: 0.2, 0.2
+            #background_normal: 'images\go_back.png'
+            text: "Go Back"
+            on_release:
+                app.root.current = "devices"
+                root.manager.transition.direction = "right"
+
+
+<CreateRoomPopup>:
+    TextInput:
+        id:roomName
+        multiline:False
+        size_hint: 0.4,0.1
+        pos_hint: {"x":0.3, "top":0.8}
+    Button:
+        id: okButton
+        text: "OK"
+        size_hint: 0.35, 0.15
+        pos_hint: {"x":0.1, "y":0.1}
+        on_release: root.obj.add_room(roomName.text)
+    Button:
+        id: cancelButton
+        text: "Cancel"
+        size_hint: 0.35, 0.15
+        pos_hint: {"x":0.5, "y":0.1}
+
+<AddDevicePopup>:
+    Label:
+        text:"EUI64"
+        pos_hint: {"x":-0.1, "y":0.25}
+    TextInput:
+        id:eui64
+        multiline:False
+        size_hint: 0.4,0.1
+        pos_hint: {"x":0.3, "y":0.6}
+    Label:
+        text:"DeviceName"
+        pos_hint: {"x":-0.05, "y":0.05}
+    TextInput:
+        id:deviceName
+        multiline:False
+        size_hint: 0.4,0.1
+        pos_hint:{"x":0.3, "y":0.4}
+    Button:
+        id: okButton
+        text: "OK"
+        size_hint: 0.35, 0.15
+        pos_hint: {"x":0.1, "y":0.1}
+        on_release: root.obj2.add_device(eui64.text,deviceName.text)
+    Button:
+        id: cancelButton
+        text: "Cancel"
+        size_hint: 0.35, 0.15
+        pos_hint: {"x":0.5, "y":0.1}
+
+<DeleteRoomPopup>:
+    Button:
+        id: okButton
+        text: "OK"
+        size_hint: 0.35, 0.15
+        pos_hint: {"x":0.1, "y":0.1}
+        on_release: root.obj.delete_room()
+    Button:
+        id: cancelButton
+        text: "Cancel"
+        size_hint: 0.35, 0.15
+        pos_hint: {"x":0.5, "y":0.1}
+
+
