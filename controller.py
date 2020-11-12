@@ -10,10 +10,17 @@ with open('config.json') as cf:
 HOST = config["socket"]["host"]
 PORT2SERVER = config["socket"]["port1"]
 PORT2DATA = config["socket"]["port2"]
+eui = 0
+
+def addDevice(eui64):
+    eui = eui64
+
+def status():
+    print("Device has been added!")
 
 def request():
     req = ""
-    commands = [b"getLeaderState", b"networkReset", "addDevíce"]
+    commands = [b"getLeaderState", b"networkReset", "addDevice"]
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((HOST, PORT2SERVER))
@@ -31,8 +38,7 @@ def request():
         elif '1' == choice:
             req = commands[1]
         elif '2' == choice:
-            eui64 = input("EUI64: ")
-            req = bytes((commands[2] + " " + eui64).encode('utf-8'))
+            req = bytes((commands[2] + " " + eui).encode('utf-8'))
         else:
             print("Unvalid option")
             exit(-1)
@@ -40,7 +46,7 @@ def request():
         data = s.recv( config["socket"]["buffer_size"] )
 
         if data == b"OK":
-            print("OK")
+            status()
         elif data == b"ERROR":
             break
 
