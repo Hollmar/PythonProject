@@ -6,7 +6,7 @@ from json import load as load_json
 
 with open('config.json') as cf:
     config = load_json(cf)
-
+#test change for git
 HOST = config["socket"]["host"]
 PORT2SERVER = config["socket"]["port1"]
 PORT2DATA = config["socket"]["port2"]
