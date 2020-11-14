@@ -40,7 +40,8 @@ class Controller:
             elif '1' == choice:
                 req = commands[1]
             elif '2' == choice:
-                req = bytes((commands[2] + " " + eui).encode('utf-8'))
+                eui64 = input("EUI64: ")
+                req = bytes((commands[2] + " " + eui64).encode('utf-8'))
             else:
                 print("Unvalid option")
                 exit(-1)
