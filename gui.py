@@ -5,6 +5,7 @@ from kivy.core.window import Window
 from roommanager import RoomManager
 from devicemanager import DeviceManager
 from brightnesssensor import BrightnessSensor
+from controller import Controller
 
 Window.clearcolor = (1, 1, 1, 1)
 

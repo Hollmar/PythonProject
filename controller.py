@@ -13,6 +13,13 @@ PORT2DATA = config["socket"]["port2"]
 eui = 0
 
 class Controller:
+    class __Controller:
+        def __init__(self):
+            pass
+    instance = None
+    def __init__(self):
+        if not Controller.instance:
+            Controller.instance = Controller.__Controller
 
     def addDevice(eui64):
         eui = eui64

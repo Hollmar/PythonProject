@@ -4,9 +4,11 @@ from kivy.uix.label import Label
 from kivy.uix.button import Button
 from device import Device
 from popups import DeleteRoomPopup, AddDevicePopup
+from controller import Controller
 
 
 class DeviceManager(Screen):
+    c = Controller()
     def create_screen(self, room):
         self.ids.stack_layout.clear_widgets()
         self.ids.label1.text = room.RoomName
@@ -30,6 +32,8 @@ class DeviceManager(Screen):
         else:
             label = Label(size_hint=(0.2, 0.25), font_size=self.width / 30, text=name, id=eui64, color=(1, 0, 0, 1))
             room.device_list.append(Device(eui64, name, label))
+            c = Controller
+            c.addDevice(eui64)
         self.create_screen(room)
 
     def brightness_change_screen(self,device):
