@@ -12,66 +12,68 @@ PORT2SERVER = config["socket"]["port1"]
 PORT2DATA = config["socket"]["port2"]
 eui = 0
 
-def addDevice(eui64):
-    eui = eui64
+class Controller:
 
-def status():
-    print("Device has been added!")
+    def addDevice(eui64):
+        eui = eui64
 
-def request():
-    req = ""
-    commands = [b"getLeaderState", b"networkReset", "addDevice"]
+    def status():
+        print("Device has been added!")
 
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((HOST, PORT2SERVER))
+    def request():
+        req = ""
+        commands = [b"getLeaderState", b"networkReset", "addDevice"]
 
-    while True:
-        for i in range(len(commands)):
-            print(str(i)+" - "+str(commands[i]))
-        
-        choice = input()
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((HOST, PORT2SERVER))
 
-        if 'q' == choice:
-            break
-        elif '0' == choice:
-            req = commands[0]
-        elif '1' == choice:
-            req = commands[1]
-        elif '2' == choice:
-            req = bytes((commands[2] + " " + eui).encode('utf-8'))
-        else:
-            print("Unvalid option")
-            exit(-1)
-        s.sendall(req)
-        data = s.recv( config["socket"]["buffer_size"] )
+        while True:
+            for i in range(len(commands)):
+                print(str(i)+" - "+str(commands[i]))
+            
+            choice = input()
 
-        if data == b"OK":
-            status()
-        elif data == b"ERROR":
-            break
+            if 'q' == choice:
+                break
+            elif '0' == choice:
+                req = commands[0]
+            elif '1' == choice:
+                req = commands[1]
+            elif '2' == choice:
+                req = bytes((commands[2] + " " + eui).encode('utf-8'))
+            else:
+                print("Unvalid option")
+                exit(-1)
+            s.sendall(req)
+            data = s.recv( config["socket"]["buffer_size"] )
 
-        print('>>> Received', repr(data))
+            if data == b"OK":
+                status()
+            elif data == b"ERROR":
+                break
 
-def client_data():
-    while True:
-        with socket.socket(socket.AF_INET, socket. socket.SOCK_STREAM) as s:
-            s.setsockopt(socket.SQL_SOCKET, socket.SO_REUSEADDR, 1)
-            s.bind((HOST, PORT2DATA))
-            s.listen()
-            conn, addr = s.accept()
+            print('>>> Received', repr(data))
 
-            with conn:
-                print('Connected by', addr)
-                while True:
-                    sensor_data = conn.recv( config["socket"]["buffer_size"] )
-                    print(sensor_data)
-                    sleep( 0.001 )
+    def client_data():
+        while True:
+            with socket.socket(socket.AF_INET, socket. socket.SOCK_STREAM) as s:
+                s.setsockopt(socket.SQL_SOCKET, socket.SO_REUSEADDR, 1)
+                s.bind((HOST, PORT2DATA))
+                s.listen()
+                conn, addr = s.accept()
 
-th_requester = threading.Thread( target=request )
-th_requester.start()
+                with conn:
+                    print('Connected by', addr)
+                    while True:
+                        sensor_data = conn.recv( config["socket"]["buffer_size"] )
+                        print(sensor_data)
+                        sleep( 0.001 )
 
-th_client_data = threading.Thread( target=client_data )
-th_client_data.start()
+    th_requester = threading.Thread( target=request )
+    th_requester.start()
+
+    th_client_data = threading.Thread( target=client_data )
+    th_client_data.start()
         
 
         
