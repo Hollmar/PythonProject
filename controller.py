@@ -3,6 +3,7 @@ from sys import exit
 import threading 
 from time import sleep
 from json import load as load_json
+from device import DeviceType
 
 with open('config.json') as cf:
     config = load_json(cf)
@@ -23,6 +24,7 @@ class Controller:
 
     def addDevice(eui64):
         eui = eui64
+        return DeviceType.ROUTER
 
     def status():
         print("Device has been added!")

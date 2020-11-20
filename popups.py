@@ -17,3 +17,9 @@ class DeleteRoomPopup(FloatLayout):
     def __init__(self, obj, **kwargs):
         super(DeleteRoomPopup, self).__init__(**kwargs)
         self.obj = obj
+
+
+class LoadPopup(FloatLayout):
+    def __init__(self, obj, **kwargs):
+        super(LoadPopup, self).__init__(**kwargs)
+        self.obj = obj
