@@ -10,7 +10,7 @@ class CreateRoomPopup(FloatLayout):
 class AddDevicePopup(FloatLayout):
     def __init__(self, obj, **kwargs):
         super(AddDevicePopup, self).__init__(**kwargs)
-        self.obj2 = obj
+        self.obj = obj
 
 
 class DeleteRoomPopup(FloatLayout):
@@ -20,6 +20,8 @@ class DeleteRoomPopup(FloatLayout):
 
 
 class LoadPopup(FloatLayout):
-    def __init__(self, obj, **kwargs):
-        super(LoadPopup, self).__init__(**kwargs)
-        self.obj = obj
+    pass
+
+class AddDeviceFailedPopup(FloatLayout):
+    pass
+

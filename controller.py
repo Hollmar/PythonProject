@@ -24,7 +24,7 @@ class Controller:
 
     def addDevice(eui64):
         eui = eui64
-        return DeviceType.ROUTER
+        return DeviceType.BRIGHTNESS
 
     def status():
         print("Device has been added!")

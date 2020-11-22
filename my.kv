@@ -1,7 +1,7 @@
 WindowManager:
     RoomManager:
     DeviceManager:
-    BrightnessSensor:
+    BrightnessSensorView:
 
 <RoomManager>:
     name: "rooms"
@@ -90,7 +90,7 @@ WindowManager:
             on_release:
                 root.delete_room_show()
 
-<BrightnessSensor>:
+<BrightnessSensorView>:
     name: "brightness"
     canvas.before:
         Color:
@@ -171,7 +171,7 @@ WindowManager:
         text: "OK"
         size_hint: 0.35, 0.15
         pos_hint: {"x":0.1, "y":0.1}
-        on_release: root.obj2.add_device(eui64.text,deviceName.text)
+        on_release: root.obj.add_device(eui64.text,deviceName.text)
     Button:
         id: cancelButton
         text: "Cancel"
@@ -191,6 +191,12 @@ WindowManager:
         size_hint: 0.35, 0.15
         pos_hint: {"x":0.5, "y":0.1}
 
-<LoadPopup>:
+<AddDeviceFailedPopup>:
+    Button:
+        id: okButton
+        text: "OK"
+        size_hint: 0.35, 0.15
+        pos_hint: {"x":0.1, "y":0.1}
+
 
 
