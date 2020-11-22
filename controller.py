@@ -22,48 +22,31 @@ class Controller:
         if not Controller.instance:
             Controller.instance = Controller.__Controller
 
+#commands = [b"getLeaderState", "addDevice", b"networkReset", "removeDevice"]
+
+    def getLeaderState():
+        
+
     def addDevice(eui64):
-        eui = eui64
-        return DeviceType.BRIGHTNESS
-
-    def status():
-        print("Device has been added!")
-
-    def request():
-        req = ""
-        commands = [b"getLeaderState", b"networkReset", "addDevice"]
-
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((HOST, PORT2SERVER))
 
-        while True:
-            for i in range(len(commands)):
-                print(str(i)+" - "+str(commands[i]))
-            
-            choice = input()
+        req = bytes(("addDevice" + " " + eui64).encode('utf-8'))
 
-            if 'q' == choice:
-                break
-            elif '0' == choice:
-                req = commands[0]
-            elif '1' == choice:
-                req = commands[1]
-            elif '2' == choice:
-                eui64 = input("EUI64: ")
-                req = bytes((commands[2] + " " + eui64).encode('utf-8'))
-            else:
-                print("Unvalid option")
-                exit(-1)
-            s.sendall(req)
-            data = s.recv( config["socket"]["buffer_size"] )
+        s.sendall(req)
+        data = s.recv( config["socket"]["buffer_size"] )
+        r_data = (data.split(b" "))[1].split(b";")
+        s.close()
 
-            if data == b"OK":
-                status()
-            elif data == b"ERROR":
-                break
-
-            print('>>> Received', repr(data))
-
+        if (eui64 == r_data[0]):
+            if(r_data[1] == "brightness"): #TODO
+                return DeviceType.BRIGHTNESS
+            elif(r_data[1] == "router"): #TODO
+                return DeviceType.ROUTER
+        else:
+            return DeviceType.ERROR
+        
+        
     def client_data():
         while True:
             with socket.socket(socket.AF_INET, socket. socket.SOCK_STREAM) as s:
