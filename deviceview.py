@@ -3,25 +3,29 @@ from enum import Enum
 
 class DeviceType(Enum):
     ERROR = 1
-    ROUTER = 2
-    BRIGHTNESS = 3
+    OK = 2
 
 
-class Device:
+class DeviceView:
+    def __init__(self, eui64, name, widget):
+        self.EUI64 = eui64
+        self.Name = name
+        self.Widget = widget
+
+class UndefinedDeviceView(DeviceView):
+    def __init__(self, eui64, name, widget):
+        self.EUI64 = eui64
+        self.Name = name
+        self.Widget = widget
+
+class Router(DeviceView):
     def __init__(self, eui64, name, widget):
         self.EUI64 = eui64
         self.Name = name
         self.Widget = widget
 
 
-class Router(Device):
-    def __init__(self, eui64, name, widget):
-        self.EUI64 = eui64
-        self.Name = name
-        self.Widget = widget
-
-
-class BrightnessSensor(Device):
+class BrightnessSensor(DeviceView):
     def __init__(self, eui64, name, widget):
         self.EUI64 = eui64
         self.Name = name

@@ -2,13 +2,25 @@ from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen
 from kivy.uix.label import Label
 from kivy.uix.button import Button
-from device import DeviceType, Router, BrightnessSensor
+from deviceview import BrightnessSensor, DeviceView, DeviceType, Router, UndefinedDeviceView
 from popups import DeleteRoomPopup, AddDevicePopup, LoadPopup, AddDeviceFailedPopup
 from controller import Controller
+import os
 
 
-class DeviceManager(Screen):
-    def create_screen(self, room):
+if os.name == 'Windows':
+    sun_picture = 'images\Sonne_HD.jpg'
+    router_picture = 'images\Router.jpg'
+else:
+    sun_picture = 'images/Sonne_HD.jpg'
+    router_picture = 'images/Router.jpg'
+
+
+c = Controller
+
+class DeviceManagerScreen(Screen):
+
+    def update_widgets(self, room):
         self.ids.stack_layout.clear_widgets()
         self.ids.label1.text = room.RoomName
         for device in room.device_list:
@@ -22,38 +34,39 @@ class DeviceManager(Screen):
         self.manager.transition.direction = "right"
 
     def add_device(self, eui64, name):
-        show = LoadPopup()
-        popup_window = Popup(title="Waiting for response...",content=show, size_hint=(None, None),size=(400, 200))
-        popup_window.open()
-        room = self.get_current_room()
-        c = Controller
-        devicetype = c.addDevice(eui64)
-        if devicetype == DeviceType.ERROR:
-            self.add_error(eui64)
-        elif devicetype == DeviceType.BRIGHTNESS:
-            self.add_brightness_sensor(eui64, name)
-        elif devicetype == DeviceType.ROUTER:
-            self.add_router(eui64, name)
-        popup_window.dismiss()
-        self.create_screen(room)
+        #self.c.addDevice(eui64)
+        self.add_undefined(eui64,name)
 
     def add_error(self, eui64):
         show = AddDeviceFailedPopup()
-        popup_window = Popup(title="Connecting to device with the EUI64 "+eui64+" failed.", content=show,
+        popup_window = Popup(title="Connection to device with the EUI64 "+eui64+" failed.", content=show,
                              size_hint=(None, None), size=(400, 200))
         popup_window.open()
         show.ids.okButton.on_release = popup_window.dismiss
 
+    def loading_popup(self):
+        show = LoadPopup()
+        popup_window = Popup(title="loading..", content=show, size_hint=(None, None), size=(400, 200))
+        popup_window.open()
+        show.ids.okButton.on_release = popup_window.dismiss
+
+    def add_undefined(self, eui64, name):
+        label = Label(size_hint=(0.2,0.25), font_size=16, color=(0,0,0,1), text='Adding device:\n' + name + '\nwith eui64:\n' + eui64)
+        device = UndefinedDeviceView(eui64, name, label)
+        room = self.get_current_room()
+        room.device_list.append(device)
+
     def add_brightness_sensor(self, eui64, name):
-        btn = Button(size_hint=(0.2, 0.25), font_size=20, text="BrightnessSensor", id=eui64)
+        btn = Button(size_hint=(0.2, 0.25), font_size=20, color=(1,1,1,1), background_normal = sun_picture, id=eui64)
         device = BrightnessSensor(eui64, name, btn)
         btn.bind(on_release=lambda x: self.brightness_change_screen(device))
+        btn.text = str(device.sensorvalue)+" Lux"+"\n\n\n"+name
         room = self.get_current_room()
         room.device_list.append(device)
 
     def add_router(self, eui64, name):
-        label = Label(size_hint=(0.2, 0.25), font_size=20, text="Router", id=eui64, color=(1, 0, 0, 1))
-        device = Router(eui64, name, label)
+        btn = Button(size_hint=(0.2, 0.25), font_size=20, text="\n\n\n"+name,background_disabled_normal=router_picture,disabled=True, id=eui64, color=(0, 0, 0, 1))
+        device = Router(eui64, name, btn)
         room = self.get_current_room()
         room.device_list.append(device)
 
@@ -72,13 +85,18 @@ class DeviceManager(Screen):
         show = DeleteRoomPopup(self)
         popup_window = Popup(title="Are you sure you want to delete the Room?", content=show, size_hint=(None, None),
                              size=(400, 400))
-        show.ids.okButton.on_release = popup_window.dismiss
+        show.ids.okButton.on_press = popup_window.dismiss
         show.ids.cancelButton.on_release = popup_window.dismiss
         popup_window.open()
 
     def add_device_show(self):
         show = AddDevicePopup(self)
         popup_window = Popup(title="Give Devicename and EUI64 ", content=show, size_hint=(None, None), size=(400, 400))
-        show.ids.okButton.on_release = popup_window.dismiss
+        show.ids.okButton.on_press = popup_window.dismiss
         show.ids.cancelButton.on_release = popup_window.dismiss
         popup_window.open()
+
+    def go_back(self):
+        self.manager.current = "rooms"
+        self.manager.transition.direction = "right"
+        self.get_current_room().updateEvent.cancel()

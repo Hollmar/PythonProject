@@ -3,4 +3,5 @@ class Room:
         self.RoomName = room_name
         self.Button = button
         self.device_list = list()
+        self.updateEvent = 0
 

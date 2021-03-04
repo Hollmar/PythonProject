@@ -1,13 +1,13 @@
 WindowManager:
-    RoomManager:
-    DeviceManager:
-    BrightnessSensorView:
+    RoomManagerScreen:
+    DeviceManagerScreen:
+    BrightnessScreen:
 
-<RoomManager>:
+<RoomManagerScreen>:
     name: "rooms"
     canvas.before:
         Color:
-            rgba: 0.4,0.65,0.85,1
+            rgba: 0.45,0.65,0.85,1
         Rectangle:
             pos: 0,root.height*0.875
             size: root.width,root.height/8
@@ -39,10 +39,10 @@ WindowManager:
             color: 0,0,0,1
             pos_hint:{"x":0,"y":-0.45}
             font_size: 25
-            text: "No Rooms set yet"
+            text: "0 Rooms set"
 
 
-<DeviceManager>:
+<DeviceManagerScreen>:
     name: "devices"
     canvas.before:
         Color:
@@ -79,8 +79,8 @@ WindowManager:
             #background_normal: 'images\go_back.png'
             text: "Go Back"
             on_release:
-                app.root.current = "rooms"
-                root.manager.transition.direction = "right"
+                root.go_back()
+
         Button:
             font_size:30
             pos_hint:{"x":0.8,"y":0}
@@ -90,7 +90,7 @@ WindowManager:
             on_release:
                 root.delete_room_show()
 
-<BrightnessSensorView>:
+<BrightnessScreen>:
     name: "brightness"
     canvas.before:
         Color:
@@ -197,6 +197,14 @@ WindowManager:
         text: "OK"
         size_hint: 0.35, 0.15
         pos_hint: {"x":0.1, "y":0.1}
+
+<LoadPopup>:
+    Button:
+        id: okButton
+        text: "OK"
+        size_hint: 0.35, 0.15
+        pos_hint: {"x":0.1, "y":0.1}
+
 
 
 
