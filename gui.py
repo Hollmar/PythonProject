@@ -2,9 +2,9 @@ from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager
 from kivy.lang import Builder
 from kivy.core.window import Window
-from roommanager import RoomManager
-from devicemanager import DeviceManager
-from brightnesssensorview import BrightnessSensorView
+from roommanagerscreen import RoomManagerScreen
+from devicemanagerscreen import DeviceManagerScreen
+from brightnessscreen import BrightnessScreen
 from controller import Controller
 
 Window.clearcolor = (1, 1, 1, 1)

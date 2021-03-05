@@ -1,4 +1,4 @@
-class device:
+class Device:
 
     eui64 = 0
     deviceStatus = 0
@@ -20,3 +20,9 @@ class device:
 
     def getDeviceType(self):
         return self.deviceType
+
+class BrightnessSensor(Device):
+    lux = 0
+
+    def updateSensorValue(value):
+        self.lux = value
