@@ -4,6 +4,8 @@ import threading
 from time import sleep
 from json import load as load_json
 from device import DeviceType
+from enum import Enum
+from device import Device
 
 with open('config.json') as cf:
     config = load_json(cf)
@@ -13,21 +15,27 @@ PORT2SERVER = config["socket"]["port1"]
 PORT2DATA = config["socket"]["port2"]
 eui = 0
 
+class deviceStatus(Enum):
+    UNDEFINED  : 1
+    ADDED      : 2
+    INITIALIZED: 3
+
 class Controller:
     class __Controller:
         def __init__(self):
             pass
     instance = None
-    def __init__(self):
+    def __init__(self,device_dict, device_list):
+        self.device_dict = {}
+        self.device_list = list(())
         if not Controller.instance:
             Controller.instance = Controller.__Controller
 
 #commands = [b"getLeaderState", "addDevice", b"networkReset", "removeDevice"]
 
-    def getLeaderState():
-        
-
     def addDevice(eui64):
+        device_list.append(eui64)
+        device_dict[eui64] = deviceStatus.UNDEFINED
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((HOST, PORT2SERVER))
 
@@ -35,17 +43,25 @@ class Controller:
 
         s.sendall(req)
         data = s.recv( config["socket"]["buffer_size"] )
-        r_data = (data.split(b" "))[1].split(b";")
         s.close()
 
-        if (eui64 == r_data[0]):
-            if(r_data[1] == "brightness"): #TODO
-                return DeviceType.BRIGHTNESS
-            elif(r_data[1] == "router"): #TODO
-                return DeviceType.ROUTER
+        device_dict[eui64] = deviceStatus.ADDED
+
+        if (eui64 == data):
+            device_dict[eui64] = deviceStatus.INITIALIZED
+            return DeviceType.OK
         else:
+            deivce_list.remove(eui64)
+            device_dict.pop(eui64)
             return DeviceType.ERROR
-        
+    
+    def checkDict(dict, list):
+        for x in list:
+            for y in dict:
+                if(x == y):
+                    continue
+                else:
+
         
     def client_data():
         while True:
@@ -62,12 +78,8 @@ class Controller:
                         print(sensor_data)
                         sleep( 0.001 )
 
-    th_requester = threading.Thread( target=request )
+    th_requester = threading.Thread( target=adddevice )
     th_requester.start()
 
     th_client_data = threading.Thread( target=client_data )
     th_client_data.start()
-        
-
-        
-
