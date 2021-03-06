@@ -11,21 +11,22 @@ class DeviceView:
         self.EUI64 = eui64
         self.Name = name
         self.Widget = widget
+        self.SensorValue = 0
 
-class UndefinedDeviceView(DeviceView):
+"""class UndefinedDeviceView(DeviceView):
     def __init__(self, eui64, name, widget):
         self.EUI64 = eui64
         self.Name = name
         self.Widget = widget
 
-class Router(DeviceView):
+class RouterView(DeviceView):
     def __init__(self, eui64, name, widget):
         self.EUI64 = eui64
         self.Name = name
         self.Widget = widget
 
 
-class BrightnessSensor(DeviceView):
+class BrightnessSensorView(DeviceView):
     def __init__(self, eui64, name, widget):
         self.EUI64 = eui64
         self.Name = name
@@ -35,6 +36,6 @@ class BrightnessSensor(DeviceView):
     def update_sensorvalue(self, newvalue):
         self.sensorvalue = newvalue
 
-
+"""
 
 

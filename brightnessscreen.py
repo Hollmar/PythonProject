@@ -1,5 +1,5 @@
 from kivy.uix.screenmanager import ScreenManager, Screen
-from deviceview import BrightnessSensor
+from deviceview import DeviceView
 
 class BrightnessScreen(Screen):
 

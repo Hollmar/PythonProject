@@ -2,7 +2,9 @@ from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen
 from kivy.uix.label import Label
 from kivy.uix.button import Button
-from deviceview import BrightnessSensor, DeviceView, DeviceType, Router, UndefinedDeviceView
+from device import Device, BrightnessSensor, Router, DeviceState
+from deviceview import DeviceView
+#from deviceview import BrightnessSensorView, DeviceView, DeviceType, RouterView, UndefinedDeviceView
 from popups import DeleteRoomPopup, AddDevicePopup, LoadPopup, AddDeviceFailedPopup
 from controller import Controller
 import os
@@ -20,22 +22,38 @@ c = Controller
 
 class DeviceManagerScreen(Screen):
 
-    def update_widgets(self, room):
+    def create_screen(self, room):
         self.ids.stack_layout.clear_widgets()
         self.ids.label1.text = room.RoomName
-        for device in room.device_list:
-            self.ids.stack_layout.add_widget(device.Widget)
+        for key,value in room.device_dict.items():
+            self.ids.stack_layout.add_widget(value.Widget)
         self.ids.stack_layout.add_widget(self.ids.add_button)
 
+    def update_widgets(self, room):
+        device_list = c.getDevices(self)
+        for device in device_list:
+            if device.eui64 in room.device_dict.keys():
+                if device.getDeviceState() == DeviceState.UNDEFINED:
+                    self.update_undefined(room.device_dict[device.eui64], device)
+                elif device.getDeviceState() == DeviceState.ADDED:
+                    self.update_undefined(room.device_dict[device.eui64], device)
+                elif device.getDeviceState() == DeviceState.INITIALIZED:
+                    if type(device) is BrightnessSensor:
+                        self.update_brightness(room.device_dict[device.eui64], device.getSensorValue())
+                    if type(device) is Router:
+                        self.update_router(room.device_dict[device.eui64])
+
     def delete_room(self):
+        self.go_back()
         rooms = self.manager.get_screen("rooms")
         rooms.delete_room(self.get_current_room())
-        self.manager.current = "rooms"
-        self.manager.transition.direction = "right"
 
     def add_device(self, eui64, name):
-        #self.c.addDevice(eui64)
         self.add_undefined(eui64,name)
+        c.testAddDevice1(self,eui64)
+        c.testAddDevice4(self,eui64)
+        c.testAddDevice5(self,eui64)
+
 
     def add_error(self, eui64):
         show = AddDeviceFailedPopup()
@@ -52,29 +70,30 @@ class DeviceManagerScreen(Screen):
 
     def add_undefined(self, eui64, name):
         label = Label(size_hint=(0.2,0.25), font_size=16, color=(0,0,0,1), text='Adding device:\n' + name + '\nwith eui64:\n' + eui64)
-        device = UndefinedDeviceView(eui64, name, label)
+        device = DeviceView(eui64, name, label)
         room = self.get_current_room()
-        room.device_list.append(device)
+        room.device_dict[eui64] = device
 
-    def add_brightness_sensor(self, eui64, name):
-        btn = Button(size_hint=(0.2, 0.25), font_size=20, color=(1,1,1,1), background_normal = sun_picture, id=eui64)
-        device = BrightnessSensor(eui64, name, btn)
-        btn.bind(on_release=lambda x: self.brightness_change_screen(device))
-        btn.text = str(device.sensorvalue)+" Lux"+"\n\n\n"+name
-        room = self.get_current_room()
-        room.device_list.append(device)
+    def update_undefined(self, DeviceView, Device):
+        DeviceView.Widget = Label(size_hint=(0.2,0.25), font_size=16, color=(0,0,0,1), text='Adding device:\n' + DeviceView.name + '\nwith eui64:\n' + Device.eui64)
+
+    def update_brightness(self, DeviceView, sensorValue):
+        btn = Button(size_hint=(0.2, 0.25), font_size=20, color=(1,1,1,1), background_normal = sun_picture)
+        btn.bind(on_release=lambda x: self.brightness_change_screen(DeviceView))
+        btn.text = str(sensorValue)+" Lux"+"\n\n\n"+ DeviceView.name
+        DeviceView.Widget = btn
 
     def add_router(self, eui64, name):
         btn = Button(size_hint=(0.2, 0.25), font_size=20, text="\n\n\n"+name,background_disabled_normal=router_picture,disabled=True, id=eui64, color=(0, 0, 0, 1))
-        device = Router(eui64, name, btn)
+        device = DeviceView(eui64, name, btn)
         room = self.get_current_room()
-        room.device_list.append(device)
+        room.device_dict.append(device)
 
-    def brightness_change_screen(self,device):
+    def brightness_change_screen(self, deviceView):
         self.manager.current = "brightness"
         self.manager.transition.direction = "left"
         brightness = self.manager.get_screen("brightness")
-        brightness.create_screen(device)
+        brightness.create_screen(deviceView)
 
     def get_current_room(self):
         rooms = self.manager.get_screen("rooms")

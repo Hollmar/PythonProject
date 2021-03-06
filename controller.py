@@ -17,7 +17,7 @@ PORT2SERVER = config["socket"]["port1"]
 PORT2DATA = config["socket"]["port2"]
 eui = 0
 
-#Test this
+# Test this
 
 testDevice1 = Device("832813223233")
 testDevice2 = Device("321919239129")
@@ -32,15 +32,15 @@ testDevice4.deviceState = DeviceState.ADDED
 testDevice5.deviceState = DeviceState.INITIALIZED
 
 
-
 class Controller:
     class __Controller:
         def __init__(self):
             pass
+
     instance = None
 
-    def __init__(self, device_dict):
-        self.device_dict = {}
+    def __init__(self):
+        self.device_dict = dict()
         if not Controller.instance:
             Controller.instance = Controller.__Controller
 
@@ -56,8 +56,17 @@ class Controller:
         self.device_dict[testDevice4.eui64] = testDevice4
         self.device_dict[testDevice5.eui64] = testDevice5
 
+    def testAddDevice1(self,eui64):
+        self.device_dict[eui64] = Device(eui64)
+
+    def testAddDevice4(self,eui64):
+        self.device_dict[eui64] = testDevice4
+
+    def testAddDevice5(self,eui64):
+        self.device_dict[eui64] = testDevice5
+
     async def addDevice(self, eui64):
-        #Delete later please
+        # Delete later please
         self.testDevices()
         ####################
         d1 = Device(eui64)
@@ -81,9 +90,9 @@ class Controller:
             self.device_dict.pop(eui64)
             return DeviceType.ERROR
 
-
     def getDevices(self):
-        return list(self.device_dict.values())
+        return list()
+        #return list(self.device_dict.values())
 
     def between_callback(self, eui64):
         loop = asyncio.new_event_loop()
