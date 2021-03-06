@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class deviceStatus(Enum):
+class DeviceState(Enum):
     UNDEFINED  : 1
     ADDED      : 2
     INITIALIZED: 3
@@ -10,21 +10,21 @@ class deviceStatus(Enum):
 class Device:
 
     eui64 = 0
-    deviceStatus = 0
+    deviceState = 0
     deviceType = 0
 
     def __init__(self, eui):
         self.eui64 = eui
-        self.deviceStatus = 0
+        self.deviceState = 0
     
-    def setDeviceStatus(self, status):
-        self.deviceStatus= status
+    def setDeviceState(self, state):
+        self.deviceState = state
 
     def setDeviceType(self, type):
         self.deviceType = type
 
-    def getDeviceStatus(self):
-        return self.deviceStatus
+    def getDeviceState(self):
+        return self.deviceState
 
     def getDeviceType(self):
         return self.deviceType
