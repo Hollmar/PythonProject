@@ -32,7 +32,7 @@ class RoomManager(Screen):
                 self.ids.bottom_label.text = "Name already in Use"
         if not name_used:
             self.ids.stack_layout.remove_widget(self.ids.add_button)
-            btn = Button(size_hint=(0.2, 0.25), font_size=25, text=name, id=name)
+            btn = Button(size_hint=(0.2, 0.25), font_size=25, text=name)
             new_room = Room(name, btn)
             btn.bind(on_release=lambda x: self.change_screen(new_room))
             room_list.append(new_room)

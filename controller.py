@@ -1,10 +1,12 @@
 import socket
+import asyncio
 from sys import exit
 import threading
 from time import sleep
 import time
 from json import load as load_json
 from deviceview import DeviceType
+from device import Device
 
 with open('config.json') as cf:
     config = load_json(cf)
@@ -22,16 +24,18 @@ class Controller:
 
     instance = None
 
-    def __init__(self):
+    def __init__(self, device_dict):
+        self.device_dict = {}
         if not Controller.instance:
             Controller.instance = Controller.__Controller
 
     # commands = [b"getLeaderState", "addDevice", b"networkReset", "removeDevice"]
 
-    def getLeaderState():
+    def getLeaderState(self):
         pass
 
-    def addDevice(eui64):
+    async def addDevice(eui64):
+
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((HOST, PORT2SERVER))
 
@@ -46,7 +50,14 @@ class Controller:
         else:
             return DeviceType.ERROR
 
-    def client_data():
+    def between_callback(self, eui64):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
+        loop.run_until_complete(self.addDevice(eui64))
+        loop.close()
+
+    def client_data(self):
         while True:
             try:
                 with socket.socket(socket.AF_INET, socket.socket.SOCK_STREAM) as s:
@@ -65,8 +76,8 @@ class Controller:
                         print(sensor_data)
                         sleep(0.001)
 
-    #th_requester = threading.Thread(target=addDevice)
-    #th_requester.start()
+    th_requester = threading.Thread(target=between_callback)
+    th_requester.start()
 
     th_client_data = threading.Thread(target=client_data)
     th_client_data.start()

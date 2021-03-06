@@ -1,3 +1,12 @@
+from enum import Enum
+
+
+class deviceStatus(Enum):
+    UNDEFINED  : 1
+    ADDED      : 2
+    INITIALIZED: 3
+
+
 class Device:
 
     eui64 = 0
@@ -7,7 +16,6 @@ class Device:
     def __init__(self, eui):
         self.eui64 = eui
         self.deviceStatus = 0
-        self.deviceType = 0
     
     def setDeviceStatus(self, status):
         self.deviceStatus= status
@@ -24,5 +32,10 @@ class Device:
 class BrightnessSensor(Device):
     lux = 0
 
-    def updateSensorValue(value):
+    def updateSensorValue(self, value):
         self.lux = value
+    def getSensorValue(self):
+        return self.lux
+
+class Router(Device):
+    children = 0
