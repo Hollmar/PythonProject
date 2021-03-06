@@ -7,6 +7,7 @@ import time
 from json import load as load_json
 from deviceview import DeviceType
 from device import Device
+from device import DeviceStatus
 
 with open('config.json') as cf:
     config = load_json(cf)
@@ -21,7 +22,6 @@ class Controller:
     class __Controller:
         def __init__(self):
             pass
-
     instance = None
 
     def __init__(self, device_dict):
@@ -34,8 +34,11 @@ class Controller:
     def getLeaderState(self):
         pass
 
-    async def addDevice(eui64):
-
+    async def addDevice(self, eui64):
+        d1 = Device(eui64)
+        self.device_dict[eui64] = d1
+        d1.deviceStatus = DeviceStatus.UNDEFINED
+        self.device_dict[eui64] = d1
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((HOST, PORT2SERVER))
 
@@ -45,11 +48,18 @@ class Controller:
         data = s.recv(config["socket"]["buffer_size"])
         s.close()
 
+        d1.deviceStatus = DeviceStatus.ADDED
         if (b"OK" == data):
+            d1.deviceStatus = DeviceStatus.INITIALIZED
             return DeviceType.OK
         else:
+            self.device_dict.pop(eui64)
             return DeviceType.ERROR
 
+    def getdevice(self, eui64):
+        return self.device_dict[eui64]
+
+    
     def between_callback(self, eui64):
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
