@@ -17,6 +17,21 @@ PORT2SERVER = config["socket"]["port1"]
 PORT2DATA = config["socket"]["port2"]
 eui = 0
 
+#Test this
+
+testDevice1 = Device("832813223233")
+testDevice2 = Device("321919239129")
+testDevice3 = Device("012312312312")
+testDevice4 = Device("325435893748")
+testDevice5 = Device("276834234343")
+
+testDevice1.deviceState = DeviceState.UNDEFINED
+testDevice2.deviceState = DeviceState.UNDEFINED
+testDevice3.deviceState = DeviceState.ADDED
+testDevice4.deviceState = DeviceState.ADDED
+testDevice5.deviceState = DeviceState.INITIALIZED
+
+
 
 class Controller:
     class __Controller:
@@ -34,7 +49,17 @@ class Controller:
     def getLeaderState(self):
         pass
 
+    def testDevices(self):
+        self.device_dict[testDevice1.eui64] = testDevice1
+        self.device_dict[testDevice2.eui64] = testDevice2
+        self.device_dict[testDevice3.eui64] = testDevice3
+        self.device_dict[testDevice4.eui64] = testDevice4
+        self.device_dict[testDevice5.eui64] = testDevice5
+
     async def addDevice(self, eui64):
+        #Delete later please
+        self.testDevices()
+        ####################
         d1 = Device(eui64)
         self.device_dict[eui64] = d1
         d1.deviceStatus = DeviceState.UNDEFINED
