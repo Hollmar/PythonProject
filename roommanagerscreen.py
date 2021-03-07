@@ -24,7 +24,7 @@ class RoomManagerScreen(Screen):
         self.manager.transition.direction = "left"
         devices = self.manager.get_screen("devices")
         devices.create_screen(room)
-        room.updateEvent = Clock.schedule_interval(lambda x: devices.update_widgets(room), 1)
+        room.updateEvent = Clock.schedule_interval(lambda x: devices.update_widgets(room), 5)
 
     def add_room(self, name):
         name_used = False

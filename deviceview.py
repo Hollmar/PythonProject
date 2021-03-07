@@ -13,6 +13,9 @@ class DeviceView:
         self.Widget = widget
         self.SensorValue = 0
 
+    def update_sensorvalue(self, newvalue):
+        self.sensorvalue = newvalue
+
 """class UndefinedDeviceView(DeviceView):
     def __init__(self, eui64, name, widget):
         self.EUI64 = eui64

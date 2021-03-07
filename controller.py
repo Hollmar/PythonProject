@@ -6,7 +6,7 @@ from time import sleep
 import time
 from json import load as load_json
 from deviceview import DeviceType
-from device import Device
+from device import Device, BrightnessSensor
 from device import DeviceState
 
 with open('config.json') as cf:
@@ -17,58 +17,37 @@ PORT2SERVER = config["socket"]["port1"]
 PORT2DATA = config["socket"]["port2"]
 eui = 0
 
-# Test this
-
-testDevice1 = Device("832813223233")
-testDevice2 = Device("321919239129")
-testDevice3 = Device("012312312312")
-testDevice4 = Device("325435893748")
-testDevice5 = Device("276834234343")
-
-testDevice1.deviceState = DeviceState.UNDEFINED
-testDevice2.deviceState = DeviceState.UNDEFINED
-testDevice3.deviceState = DeviceState.ADDED
-testDevice4.deviceState = DeviceState.ADDED
-testDevice5.deviceState = DeviceState.INITIALIZED
-
-
 class Controller:
-    class __Controller:
-        def __init__(self):
-            pass
-
-    instance = None
+    __shared_state = {}
 
     def __init__(self):
+        self.__dict__ = self.__shared_state
         self.device_dict = dict()
-        if not Controller.instance:
-            Controller.instance = Controller.__Controller
+
 
     # commands = [b"getLeaderState", "addDevice", b"networkReset", "removeDevice"]
 
     def getLeaderState(self):
         pass
 
-    def testDevices(self):
-        self.device_dict[testDevice1.eui64] = testDevice1
-        self.device_dict[testDevice2.eui64] = testDevice2
-        self.device_dict[testDevice3.eui64] = testDevice3
-        self.device_dict[testDevice4.eui64] = testDevice4
-        self.device_dict[testDevice5.eui64] = testDevice5
 
+    #testmethods
     def testAddDevice1(self,eui64):
         self.device_dict[eui64] = Device(eui64)
+        device = self.device_dict[eui64]
+        device.deviceState = DeviceState.UNDEFINED
 
-    def testAddDevice4(self,eui64):
-        self.device_dict[eui64] = testDevice4
+    def testAddDevice2(self,eui64):
+        self.device_dict[eui64] = Device(eui64)
+        device = self.device_dict[eui64]
+        device.deviceState = DeviceState.ADDED
 
-    def testAddDevice5(self,eui64):
-        self.device_dict[eui64] = testDevice5
+    def testAddDevice3(self,eui64):
+        self.device_dict[eui64] = BrightnessSensor(eui64)
+        device = self.device_dict[eui64]
+        device.deviceState = DeviceState.INITIALIZED
 
     async def addDevice(self, eui64):
-        # Delete later please
-        self.testDevices()
-        ####################
         d1 = Device(eui64)
         self.device_dict[eui64] = d1
         d1.deviceStatus = DeviceState.UNDEFINED
@@ -91,8 +70,7 @@ class Controller:
             return DeviceType.ERROR
 
     def getDevices(self):
-        return list()
-        #return list(self.device_dict.values())
+        return list(self.device_dict.values())
 
     def between_callback(self, eui64):
         loop = asyncio.new_event_loop()
