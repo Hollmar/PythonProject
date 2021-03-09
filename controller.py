@@ -47,40 +47,18 @@ class Controller:
         device = self.device_dict[eui64]
         device.deviceState = DeviceState.INITIALIZED
 
-    async def addDevice(self, eui64):
+    def addDevice(self, eui64):
         d1 = Device(eui64)
-        self.device_dict[eui64] = d1
         d1.deviceState = DeviceState.UNDEFINED
         self.device_dict[eui64] = d1
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((HOST, PORT2SERVER))
-
         req = bytes(("addDevice" + " " + eui64).encode('utf-8'))
-
         s.sendall(req)
-        data = s.recv(config["socket"]["buffer_size"])
         s.close()
-
-        r_data = data.split(" ")
-        data_info = r_data[1].split(";")
-
-        if r_data[0] == b"addDeviceResponse":
-            if data_info[0] == d1.eui64 and data_info[1] == b"OK":
-                d1.deviceState = DeviceState.ADDED
-                return DeviceType.OK
-            else:
-                self.device_dict.pop(eui64)
-                return DeviceType.ERROR
 
     def getDevices(self):
         return list(self.device_dict.values())
-
-    def between_callback(self, eui64):
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-
-        loop.run_until_complete(self.addDevice(eui64))
-        loop.close()
 
     def client_data(self):
         while True:
@@ -97,12 +75,19 @@ class Controller:
                 with conn:
                     print('Connected by', addr)
                     while True:
+                        data = s.recv(config["socket"]["buffer_size"])
+                        r_data = data.split(" ")
+                        data_info = r_data[1].split(";")
+                        if r_data[0] == b"addDeviceResponse":
+                            if data_info[0] == d1.eui64 and data_info[1] == b"OK":
+                                d1.deviceState = DeviceState.ADDED
+                                return DeviceType.OK
+                            else:
+                                self.device_dict.pop(eui64)
+                                return DeviceType.ERROR
                         sensor_data = conn.recv(config["socket"]["buffer_size"])
                         print(sensor_data)
                         sleep(0.001)
-
-    th_requester = threading.Thread(target=between_callback)
-    th_requester.start()
 
     th_client_data = threading.Thread(target=client_data)
     th_client_data.start()
