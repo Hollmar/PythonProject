@@ -50,7 +50,7 @@ class Controller:
     async def addDevice(self, eui64):
         d1 = Device(eui64)
         self.device_dict[eui64] = d1
-        d1.deviceStatus = DeviceState.UNDEFINED
+        d1.deviceState = DeviceState.UNDEFINED
         self.device_dict[eui64] = d1
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((HOST, PORT2SERVER))
@@ -61,13 +61,16 @@ class Controller:
         data = s.recv(config["socket"]["buffer_size"])
         s.close()
 
-        d1.deviceStatus = DeviceState.ADDED
-        if (b"OK" == data):
-            d1.deviceStatus = DeviceState.INITIALIZED
-            return DeviceType.OK
-        else:
-            self.device_dict.pop(eui64)
-            return DeviceType.ERROR
+        r_data = data.split(" ")
+        data_info = r_data[1].split(";")
+
+        if r_data[0] == b"addDeviceResponse":
+            if data_info[0] == d1.eui64 and data_info[1] == b"OK":
+                d1.deviceState = DeviceState.ADDED
+                return DeviceType.OK
+            else:
+                self.device_dict.pop(eui64)
+                return DeviceType.ERROR
 
     def getDevices(self):
         return list(self.device_dict.values())
