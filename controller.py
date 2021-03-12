@@ -6,7 +6,7 @@ from time import sleep
 import time
 from json import load as load_json
 from deviceview import DeviceType
-from device import Device, BrightnessSensor
+from device import Device, BrightnessSensor, Router
 from device import DeviceState
 
 with open('config.json') as cf:
@@ -78,14 +78,41 @@ class Controller:
                         data = s.recv(config["socket"]["buffer_size"])
                         r_data = data.split(" ")
                         data_info = r_data[1].split(";")
+
+                        #Check AddDeviceResponse
                         if r_data[0] == b"addDeviceResponse":
-                            if data_info[0] == d1.eui64 and data_info[1] == b"OK":
-                                d1.deviceState = DeviceState.ADDED
+                            if data_info[1] == b"OK":
+                                self.device_dict[data_info[0]] = DeviceState.ADDED
                                 return DeviceType.OK
                             else:
-                                self.device_dict.pop(eui64)
+                                self.device_dict.pop(data_info[0])
                                 return DeviceType.ERROR
+
                         sensor_data = conn.recv(config["socket"]["buffer_size"])
+                        s_data = sensor_data.split(" ")
+                        s_info = s_data[1].split(";")
+
+                        #Check for deviceSetupInfo and deviceData
+                        if s_data[0] == b"deviceSetupInfo":
+                            if s_info[1] == b"brightness":
+                                tempDevice = BrightnessSensor(s_info[0])
+                                tempDevice.deviceState = DeviceState.INITIALIZED
+                                self.device_dict[s_info[0]] = tempDevice
+                                return DeviceType.OK
+                            elif s_info[1] == b"Router":
+                                tempDevice = Router(s_info[0])
+                                tempDevice.deviceState = DeviceState.INITIALIZED
+                                self.device_dict[s_info[0]] = tempDevice
+                                return DeviceType.OK
+                            else:
+                                return DeviceType.ERROR
+                        elif s_data[0] == b"deviceData":
+                            tempDevice = self.device_dict[s_info[0]]
+                            tempDevice.lux = s_info[1]
+                            return DeviceType.OK
+                        else:
+                            print("ERROR")
+                            return
                         print(sensor_data)
                         sleep(0.001)
 
