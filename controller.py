@@ -57,7 +57,7 @@ class Controller:
         s.connect((HOST, PORT2SERVER))
         req = bytes(("addDevice" + " " + eui64).encode('utf-8'))
         s.sendall(req)
-        s.close()
+        #s.close()
 
     def getDevices(self):
         return list(self.device_dict.values())
@@ -81,47 +81,43 @@ class Controller:
                     print('2 Connected by', addr)
                     while True:
                         data = conn.recv(config["socket"]["buffer_size"])
+                        print(b"controller data" + data)
                         r_data = data.split(b" ")
-                        data_info = r_data[1].split(b";")
-
+                        #print("controller r_data" + str(r_data))
                         #Check AddDeviceResponse
                         if r_data[0] == b"addDeviceResponse":
+                            data_info = r_data[1].split(b';')
+                            print("data_info" + str(data_info))
                             if data_info[1] == b"OK":
                                 eui = data_info[0].decode('utf-8')
                                 print(eui)
+                                print(str(self.device_dict.get(eui).deviceState))
                                 self.device_dict.get(eui).deviceState = DeviceState.ADDED
+                                print(str(self.device_dict.get(eui).deviceState))
                                 print("OK")
-                                print(eui)
-                                return DeviceType.OK
                             else:
                                 self.device_dict.pop(data_info[0])
-                                print("ERROR")
-                                return DeviceType.ERROR
-
-                        sensor_data = conn.recv(config["socket"]["buffer_size"])
-                        s_data = sensor_data.split(b" ")
-                        s_info = s_data[1].split(b";")
+                                print("ERROR addDeviceResponse")
 
                         #Check for deviceSetupInfo and deviceData
-                        if s_data[0] == b"deviceSetupInfo":
-                            if s_info[1] == b"brightness":
-                                tempDevice = BrightnessSensor(s_info[0])
+                        elif r_data[0] == b'deviceSetupInfo':
+                            data_info = r_data[1].split(b';')
+                            print("data_info" + str(data_info))
+                            if data_info[1] == b'BRIGHTNESS':
+                                eui = data_info[0].decode('utf-8')
+                                print(str(self.device_dict.get(eui).deviceState))
+                                self.device_dict.get(eui).deviceState = DeviceState.INITIALIZED
+                                print(str(self.device_dict.get(eui).deviceState))
+                            elif data_info[1] == b"ROUTER":
+                                tempDevice = Router(data_info[0])
                                 tempDevice.deviceState = DeviceState.INITIALIZED
-                                self.device_dict[s_info[0]] = tempDevice
-                                return DeviceType.OK
-                            elif s_info[1] == b"Router":
-                                tempDevice = Router(s_info[0])
-                                tempDevice.deviceState = DeviceState.INITIALIZED
-                                self.device_dict[s_info[0]] = tempDevice
-                                return DeviceType.OK
+                                self.device_dict[data_info[0]] = tempDevice
                             else:
-                                return DeviceType.ERROR
-                        elif s_data[0] == b"deviceData":
-                            tempDevice = self.device_dict[s_info[0]]
-                            tempDevice.lux = s_info[1]
-                            return DeviceType.OK
-                        else:
-                            print("ERROR")
-                            return
-                        print(sensor_data)
-                        sleep(0.001)
+                                print("error")
+                        elif r_data[0] == b"deviceData":
+                            data_info = r_data[1].split(b';')
+                            eui = data_info[0].decode('utf-8')
+                            self.device_dict.get(eui).lux = data_info[1]
+                            print(str(self.device_dict.get(eui).lux))
+                        #print(data)
+                        #sleep(0.5)

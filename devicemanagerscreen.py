@@ -54,7 +54,7 @@ class DeviceManagerScreen(Screen):
         rooms.delete_room(self.get_current_room())
 
     def add_device(self, eui64, name):
-        #self.add_undefined(eui64,name)
+        self.add_undefined(eui64,name)
         self.c.addDevice(eui64)
         #testing different devices
         """
