@@ -23,6 +23,8 @@ class Controller:
     def __init__(self):
         self.__dict__ = self.__shared_state
         self.device_dict = dict()
+        th_client_data = threading.Thread(target=self.client_data)
+        th_client_data.start()
 
 
     # commands = [b"getLeaderState", "addDevice", b"networkReset", "removeDevice"]
@@ -60,37 +62,45 @@ class Controller:
     def getDevices(self):
         return list(self.device_dict.values())
 
+
     def client_data(self):
+        print("client data start")
         while True:
             try:
-                with socket.socket(socket.AF_INET, socket.socket.SOCK_STREAM) as s:
-                    s.setsockopt(socket.SQL_SOCKET, socket.SO_REUSEADDR, 1)
-                    s.bind((HOST, PORT2DATA))
-                    s.listen()
-            except:
-                print("kein socket")
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                s.bind((HOST, PORT2DATA))
+                s.listen()
+            except Exception as e:
+                print(str(e))
                 break
             else:
+                print("else block")
                 conn, addr = s.accept()
                 with conn:
-                    print('Connected by', addr)
+                    print('2 Connected by', addr)
                     while True:
-                        data = s.recv(config["socket"]["buffer_size"])
-                        r_data = data.split(" ")
-                        data_info = r_data[1].split(";")
+                        data = conn.recv(config["socket"]["buffer_size"])
+                        r_data = data.split(b" ")
+                        data_info = r_data[1].split(b";")
 
                         #Check AddDeviceResponse
                         if r_data[0] == b"addDeviceResponse":
                             if data_info[1] == b"OK":
-                                self.device_dict[data_info[0]] = DeviceState.ADDED
+                                eui = data_info[0].decode('utf-8')
+                                print(eui)
+                                self.device_dict.get(eui).deviceState = DeviceState.ADDED
+                                print("OK")
+                                print(eui)
                                 return DeviceType.OK
                             else:
                                 self.device_dict.pop(data_info[0])
+                                print("ERROR")
                                 return DeviceType.ERROR
 
                         sensor_data = conn.recv(config["socket"]["buffer_size"])
-                        s_data = sensor_data.split(" ")
-                        s_info = s_data[1].split(";")
+                        s_data = sensor_data.split(b" ")
+                        s_info = s_data[1].split(b";")
 
                         #Check for deviceSetupInfo and deviceData
                         if s_data[0] == b"deviceSetupInfo":
@@ -115,6 +125,3 @@ class Controller:
                             return
                         print(sensor_data)
                         sleep(0.001)
-
-    th_client_data = threading.Thread(target=client_data)
-    th_client_data.start()
