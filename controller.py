@@ -105,13 +105,18 @@ class Controller:
                             print("data_info" + str(data_info))
                             if data_info[1] == b'BRIGHTNESS':
                                 eui = data_info[0].decode('utf-8')
-                                print(str(self.device_dict.get(eui).deviceState))
+                                brightness = BrightnessSensor(eui)
+                                brightness.deviceState = DeviceState.ADDED
+                                self.device_dict[eui] = brightness
                                 self.device_dict.get(eui).deviceState = DeviceState.INITIALIZED
                                 print(str(self.device_dict.get(eui).deviceState))
                             elif data_info[1] == b"ROUTER":
-                                tempDevice = Router(data_info[0])
-                                tempDevice.deviceState = DeviceState.INITIALIZED
-                                self.device_dict[data_info[0]] = tempDevice
+                                eui = data_info[0].decode('utf-8')
+                                router = Router(eui)
+                                router.deviceState = DeviceState.ADDED
+                                self.device_dict[eui] = router
+                                self.device_dict.get(eui).deviceState = DeviceState.INITIALIZED
+                                print(str(self.device_dict.get(eui).deviceState))
                             else:
                                 print("error")
                         elif r_data[0] == b"deviceData":
