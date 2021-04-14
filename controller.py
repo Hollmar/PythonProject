@@ -55,7 +55,7 @@ class Controller:
         self.device_dict[eui64] = d1
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((HOST, PORT2SERVER))
-        req = bytes(("addDevice" + " " + eui64).encode('utf-8'))
+        req = bytes(("addDevice" + ":" + eui64).encode('utf-8'))
         s.sendall(req)
         #s.close()
 
@@ -81,8 +81,11 @@ class Controller:
                     print('2 Connected by', addr)
                     while True:
                         data = conn.recv(config["socket"]["buffer_size"])
+                        e_data = data.split(b" ")
+                        e_data[-1] = e_data[-1].strip(b"\r\n")
                         print(b"controller data" + data)
-                        r_data = data.split(b" ")
+                        r_data = e_data[-1].split(b":")
+                        print(str(r_data))
                         #print("controller r_data" + str(r_data))
                         #Check AddDeviceResponse
                         if r_data[0] == b"addDeviceResponse":
@@ -98,7 +101,6 @@ class Controller:
                             else:
                                 self.device_dict.pop(data_info[0])
                                 print("ERROR addDeviceResponse")
-
                         #Check for deviceSetupInfo and deviceData
                         elif r_data[0] == b'deviceSetupInfo':
                             data_info = r_data[1].split(b';')
@@ -122,7 +124,8 @@ class Controller:
                         elif r_data[0] == b"deviceData":
                             data_info = r_data[1].split(b';')
                             eui = data_info[0].decode('utf-8')
-                            self.device_dict.get(eui).lux = data_info[1]
+                            new_lux = data_info[1].decode('utf-8')
+                            self.device_dict.get(eui).lux = new_lux
                             print(str(self.device_dict.get(eui).lux))
                         #print(data)
                         #sleep(0.5)
