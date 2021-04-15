@@ -53,7 +53,7 @@ class RoomManagerScreen(Screen):
 
     def create_room_show(self):
         show = CreateRoomPopup(self)
-        popup_window = Popup(title="Name your Room", content=show, size_hint=(None, None), size=(400, 400))
+        popup_window = Popup(title="Name your Room", content=show, size_hint=(None, None), size=(400, 400), auto_dismiss=False)
         show.ids.okButton.on_release = popup_window.dismiss
         show.ids.cancelButton.on_release = popup_window.dismiss
         popup_window.open()

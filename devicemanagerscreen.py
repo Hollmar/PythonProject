@@ -130,7 +130,7 @@ class DeviceManagerScreen(Screen):
 
     def add_device_show(self):
         show = AddDevicePopup(self)
-        popup_window = Popup(title="Give Devicename and EUI64 ", content=show, size_hint=(None, None), size=(400, 400))
+        popup_window = Popup(title="Give Devicename and EUI64 ", content=show, size_hint=(None, None), size=(400, 400), auto_dismiss=False)
         show.ids.okButton.on_press = popup_window.dismiss
         show.ids.cancelButton.on_release = popup_window.dismiss
         popup_window.open()

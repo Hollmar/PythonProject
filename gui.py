@@ -8,7 +8,8 @@ from controller import Controller
 
 
 from kivy.core.window import Window
-Window.size = (800, 480)
+Window.size = (800, 460)
+Window.top = -15
 
 Window.clearcolor = (1, 1, 1, 1)
 
