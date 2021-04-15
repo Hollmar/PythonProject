@@ -10,5 +10,5 @@ class BrightnessScreen(Screen):
 
     def display_sensorvalue(self, sensor, newvalue):
         sensor.update_sensorvalue(newvalue)
-        self.ids.label2.text = "Current brightness: " + str(sensor.sensorvalue) + " Lux"
+        self.ids.label2.text = "Current brightness: " + str(sensor.SensorValue) + " Lux"
 

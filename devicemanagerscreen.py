@@ -40,10 +40,11 @@ class DeviceManagerScreen(Screen):
                 if device.getDeviceState() == DeviceState.UNDEFINED:
                     self.update_undefined(room.device_dict[device.eui64], device)
                 elif device.getDeviceState() == DeviceState.ADDED:
-                    self.update_undefined(room.device_dict[device.eui64], device)
+                    self.update_added(room.device_dict[device.eui64], device)
                 elif device.getDeviceState() == DeviceState.INITIALIZED:
                     if type(device) is BrightnessSensor:
-                        self.update_brightness(room.device_dict[device.eui64], device.getSensorValue())
+                        room.device_dict.get(device.eui64).SensorValue = device.lux
+                        self.update_brightness(room.device_dict.get(device.eui64))
                     if type(device) is Router:
                         self.update_router(room.device_dict[device.eui64])
         self.create_screen(self.get_current_room())
@@ -55,9 +56,9 @@ class DeviceManagerScreen(Screen):
 
     def add_device(self, eui64, name):
         self.add_undefined(eui64,name)
-        self.c.addDevice(eui64)
+        #self.c.addDevice(eui64)
         #testing different devices
-        """
+
         self.count += 1
         if self.count % 3 == 0:
             self.c.testAddDevice1(eui64)
@@ -65,7 +66,7 @@ class DeviceManagerScreen(Screen):
             self.c.testAddDevice2(eui64)
         else:
             self.c.testAddDevice3(eui64)
-        """
+
         self.create_screen(self.get_current_room())
 
 
@@ -89,13 +90,18 @@ class DeviceManagerScreen(Screen):
         room.device_dict[eui64] = device
 
     def update_undefined(self, DeviceView, Device):
-        DeviceView.Widget = Label(size_hint=(0.2,0.25), font_size=16, color=(0,0,0,1), text='Adding device:\n' + DeviceView.Name + '\nwith eui64:\n' + Device.eui64)
+        DeviceView.Widget = Label(size_hint=(0.2,0.25), font_size=16, color=(0,0,0,1),
+                                  text='Adding device:\n' + DeviceView.Name + '\nwith eui64:\n' + Device.eui64)
 
-    def update_brightness(self, DeviceView, sensorValue):
+    def update_added(self, DeviceView, Device):
+        DeviceView.Widget = Label(size_hint=(0.2,0.25), font_size=16, color=(0,0,0,1),
+                                  text='Device:\n' + DeviceView.Name + '\nwith eui64:\n' + Device.eui64 +'\nhas been added.')
+
+    def update_brightness(self, deviceview):
         btn = Button(size_hint=(0.2, 0.25), font_size=20, color=(1,1,1,1), background_normal = sun_picture)
-        btn.bind(on_release=lambda x: self.brightness_change_screen(DeviceView))
-        btn.text = str(sensorValue)+" Lux"+"\n\n\n"+ DeviceView.Name
-        DeviceView.Widget = btn
+        btn.bind(on_release=lambda x: self.brightness_change_screen(deviceview))
+        btn.text = str(deviceview.SensorValue)+" Lux"+"\n\n\n"+ deviceview.Name
+        deviceview.Widget = btn
 
     def add_router(self, eui64, name):
         btn = Button(size_hint=(0.2, 0.25), font_size=20, text="\n\n\n"+name,background_disabled_normal=router_picture,disabled=True, id=eui64, color=(0, 0, 0, 1))

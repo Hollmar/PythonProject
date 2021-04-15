@@ -1,11 +1,14 @@
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager
 from kivy.lang import Builder
-from kivy.core.window import Window
 from roommanagerscreen import RoomManagerScreen
 from devicemanagerscreen import DeviceManagerScreen
 from brightnessscreen import BrightnessScreen
 from controller import Controller
+
+
+from kivy.core.window import Window
+Window.size = (800, 480)
 
 Window.clearcolor = (1, 1, 1, 1)
 

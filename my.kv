@@ -27,7 +27,6 @@ WindowManager:
             orientation: 'lr-tb'
             spacing: 20,20
             padding: root.width*0.1,root.height*0.3,root.width*0.1,0
-
             Button:
                 id:add_button
                 font_size:35
@@ -40,7 +39,6 @@ WindowManager:
             pos_hint:{"x":0,"y":-0.45}
             font_size: 25
             text: "0 Rooms set"
-
 
 <DeviceManagerScreen>:
     name: "devices"
@@ -80,7 +78,6 @@ WindowManager:
             text: "Go Back"
             on_release:
                 root.go_back()
-
         Button:
             font_size:30
             pos_hint:{"x":0.8,"y":0}
