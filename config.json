@@ -4,5 +4,12 @@
         "port2": 65432,
         "host": "127.0.0.1",
         "buffer_size": 1024
+    },
+    "dongle": {
+        "baudrate": 115200,
+        "timeout": 1
+    },
+    "network": {
+        "pairing_time_s": 20
     }
 }
