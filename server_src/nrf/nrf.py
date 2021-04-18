@@ -1,7 +1,15 @@
 # Standard library imports
+from json import load as load_json
 import logging
+from platform import system
 from re import search
+import sys
 from time import sleep
+
+# Third party imports
+from serial import Serial
+from serial.tools import list_ports
+from serial.serialutil import SerialException
 
 # Local application imports
 from .msg import ERROR_MSG, SUCCESS_MSG
@@ -10,12 +18,69 @@ from .udp import Udp
 
 
 class nRF52840:
-    """ Provides methods for serial communication with a nRF52480 Dongle """
-    def __init__(self, ser: object):
+
+    def __init__(self, ser: object = None) -> None:
         self.__PSKD = b'J01NME' # Pre-shared-key for network joining
-        self._serial_conn = ser # FIXME Make private
         self.__udp = Udp(b'ff03::1', b'1212', b'2121')
         self.__cache = Cache()
+
+        if ser is not None:
+            # Use given serial device
+            self._serial_conn = ser
+
+        else:
+            # Try to find a suitable serial device
+            if system() == "Windows":
+                port_type = "COM[^1|*]"
+
+            elif system() == "Linux":
+                port_type = "ttyACM*"
+
+
+            # Read configuration
+            with open('../config.json') as cf:
+                config = ( load_json(cf) )["dongle"]
+
+            # Auto port recognition
+            __SERIAL_PORTS = []
+            try:
+                __SERIAL_PORTS.append( str(*list_ports.grep(port_type)).split(' ')[0] )
+
+                if __SERIAL_PORTS == ['']:
+                    raise FileNotFoundError
+
+            except (TypeError, FileNotFoundError):
+                sys.stderr.write("No serial device found\n")
+                sys.exit(-1)
+
+            print(__SERIAL_PORTS)
+            for port in __SERIAL_PORTS:
+                try:
+                    # Serial configuration
+                    # -Data bits: 8
+                    # -Stop bits: 1
+                    # -Parity: None
+                    # -Flow control: None
+                    __serial_conn = Serial( port, baudrate = config["baudrate"], timeout = config["timeout"] )
+
+                except SerialException:
+                    # Try next port
+                    continue
+
+                else:
+                    # Working port found
+                    break
+
+            if not __serial_conn:
+                sys.stderr.write("Couldn't connect to any serial device\n")
+                sys.exit(-1)
+            else:
+                self._serial_conn = __serial_conn
+
+            # nRF-Dongle setup
+            __serial_conn.write( b'factoryreset\n' )
+            __serial_conn.reset_input_buffer()
+
 
     ####################################
     # Methods for startup and shutdown #

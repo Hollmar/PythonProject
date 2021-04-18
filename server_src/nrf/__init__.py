@@ -1,3 +1,4 @@
+"""
 # Standard library imports
 from json import load as load_json
 from platform import system
@@ -14,7 +15,7 @@ from .nrf import nRF52840
 
 
 if system() == "Windows":
-    port_type = "COM3"
+    port_type = "COM[^1|*]"
 
 elif system() == "Linux":
     port_type = "ttyACM*"
@@ -70,4 +71,4 @@ __serial_conn.reset_input_buffer()
 # Export the serial connection
 __all__ = [
     "nrf_dongle"
-]
+] """

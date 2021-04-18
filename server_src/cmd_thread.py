@@ -91,6 +91,7 @@ def add_device(nrf: nRF52840, eui64: bytes, lock: Lock, pairing_time: int) -> by
 
     lock.acquire()
 
+    #TODO: shut down commissioner
     if not add_device.first_dev_conn:
         add_device.first_dev_conn = True
         nrf.start_commissioner() # only needed once

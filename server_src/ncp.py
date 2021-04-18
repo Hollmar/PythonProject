@@ -13,7 +13,7 @@ import logging
 import threading
 
 # Local application imports
-from nrf import nrf_dongle
+from nrf.nrf import nRF52840
 from socket_config import SocketConfig
 
 from cmd_thread import cmd_thread
@@ -46,6 +46,10 @@ def main():
     )
 
     lock = threading.Lock()
+
+    nrf_dongle = nRF52840()
+
+    nrf_dongle.configure_leader()
 
     th_server = threading.Thread( target=cmd_thread, args=[ nrf_dongle,
                                                             lock,
