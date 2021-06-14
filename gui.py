@@ -13,6 +13,7 @@ from kivy.uix.vkeyboard import VKeyboard
 from kivy.core.window import Window
 
 Window.size = (800, 460)
+Window.fullscreen = True
 #Window.top = -15
 
 Window.clearcolor = (1, 1, 1, 1)
