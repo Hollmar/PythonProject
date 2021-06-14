@@ -1,5 +1,10 @@
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.image import Image
+from kivy.properties import NumericProperty
 
+
+class UndefinedProgress(Image):
+    angle = NumericProperty()
 
 class CreateRoomPopup(FloatLayout):
     def __init__(self, obj, **kwargs):

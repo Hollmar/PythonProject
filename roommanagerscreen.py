@@ -24,17 +24,17 @@ class RoomManagerScreen(Screen):
         self.manager.transition.direction = "left"
         devices = self.manager.get_screen("devices")
         devices.create_screen(room)
-        room.updateEvent = Clock.schedule_interval(lambda x: devices.update_widgets(room), 1)
+        room.updateEvent = Clock.schedule_interval(lambda x: devices.update_widgets(room), 0.1)
 
     def add_room(self, name):
         name_used = False
         for room in room_list:
             if room.RoomName == name:
                 name_used = True
-                self.ids.bottom_label.text = "Name already in Use"
+                self.ids.bottom_label.text = "Name already in use"
         if not name_used:
             self.ids.stack_layout.remove_widget(self.ids.add_button)
-            btn = Button(size_hint=(0.2, 0.25), font_size=25, text=name)
+            btn = Button(size=(self.width/6,self.height/5),size_hint=(None,None), font_size=25, text=name)
             new_room = Room(name, btn)
             btn.bind(on_release=lambda x: self.change_screen(new_room))
             room_list.append(new_room)

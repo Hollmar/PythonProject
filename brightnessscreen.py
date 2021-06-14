@@ -4,7 +4,7 @@ from deviceview import DeviceView
 class BrightnessScreen(Screen):
 
     def create_screen(self, sensor):
-        self.display_sensorvalue(sensor, 110)
+        self.display_sensorvalue(sensor, 200)
         self.ids.label1.text = sensor.Name
         self.ids.label3.text = "EUI64: "+sensor.EUI64
 

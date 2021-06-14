@@ -12,16 +12,17 @@ WindowManager:
             pos: 0,root.height*0.875
             size: root.width,root.height/8
     FloatLayout:
+        id:float_layout
         size: root.width, root.height
         Image:
             source:'images\house.png'
             size_hint_x:0.05
             pos_hint:{"x":0.9,"y":0.44}
         Label:
-            text: "Building"
+            text: "Room Overview"
             color: 1,1,1,1
             pos_hint:{"x":0,"y":0.45}
-            font_size: 20
+            font_size: 25
         StackLayout:
             id:stack_layout
             orientation: 'lr-tb'
@@ -30,7 +31,8 @@ WindowManager:
             Button:
                 id:add_button
                 font_size:35
-                size_hint: 0.2, 0.25
+                size: root.width/6 , root.height/5
+                size_hint: None,None
                 text: "+"
                 on_release: root.create_room_show()
         Label:
@@ -49,6 +51,7 @@ WindowManager:
             pos: 0,root.height*0.875
             size: root.width,root.height/8
     FloatLayout:
+        id:float
         size: root.width, root.height
         Label:
             id: label1
@@ -62,12 +65,13 @@ WindowManager:
         StackLayout:
             id:stack_layout
             orientation: 'lr-tb'
-            spacing: 20,20
+            spacing: 20, 20
             padding: root.width*0.1,root.height*0.3,root.width*0.1,0
             Button:
                 id:add_button
                 font_size:30
-                size_hint: 0.2, 0.25
+                size: root.width/6 , root.height/5
+                size_hint: None,None
                 text: "+"
                 on_release: root.add_device_show()
         Button:
@@ -126,6 +130,20 @@ WindowManager:
             on_release:
                 app.root.current = "devices"
                 root.manager.transition.direction = "right"
+
+<UndefinedProgress>
+    canvas.before:
+        PushMatrix
+        Rectangle:
+            texture: self.texture
+            size: 10,10
+            pos:self.x -10, self.y -10
+        Rotate:
+            angle: root.angle
+            origin: root.center
+            axis: 0, 0, 1
+    canvas.after:
+        PopMatrix
 
 
 <CreateRoomPopup>:
