@@ -73,7 +73,7 @@ class DeviceManagerScreen(Screen):
             show.ids.okButton.on_release = popup_window.dismiss
             return
         self.add_undefined(eui64, name)
-        self.c.addDevice(eui64)
+        #self.c.addDevice(eui64)
         # testing different devices
         """self.count += 1
         if self.count % 3 == 1:
@@ -122,7 +122,7 @@ class DeviceManagerScreen(Screen):
     def update_brightness(self, deviceview):
         btn = Button(size=(self.width/6,self.height/5),size_hint=(None,None), font_size=20,color=(0, 0, 0, 1), background_normal=sun_picture)
         btn.bind(on_release=lambda x: self.brightness_change_screen(deviceview))
-        btn.text = str(deviceview.SensorValue) + " Lux" + "\n\n\n" + deviceview.Name
+        btn.text = str(deviceview.SensorValue).lstrip("0") + " Lux" + "\n\n\n" + deviceview.Name
         deviceview.Widget = btn
 
 #function to update device as router
