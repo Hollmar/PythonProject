@@ -1,28 +1,18 @@
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager
 from kivy.lang import Builder
-import kivy.core.window
-from roommanagerscreen import RoomManagerScreen
-from devicemanagerscreen import DeviceManagerScreen
-from brightnessscreen import BrightnessScreen
-from controller import Controller
-from kivy.core.image import Image
-from kivy.properties import NumericProperty
-from kivy.uix.vkeyboard import VKeyboard
-
 from kivy.core.window import Window
 
-#Window.size = (800, 460)
+#window settings
+Window.size = (800, 480)
 Window.fullscreen = True
-#Window.top = -15
-
 Window.clearcolor = (1, 1, 1, 1)
 
-
+#Screenmanager needed to navigate between different views
 class WindowManager(ScreenManager):
     pass
 
-
+#loading kv-file
 kv = Builder.load_file("my.kv")
 
 

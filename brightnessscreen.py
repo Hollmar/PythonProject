@@ -1,13 +1,14 @@
-from kivy.uix.screenmanager import ScreenManager, Screen
-from deviceview import DeviceView
+from kivy.uix.screenmanager import Screen
 
 class BrightnessScreen(Screen):
 
+    # setting labels
     def create_screen(self, sensor):
         self.ids.label1.text = sensor.Name
         self.ids.label2.text = "Current brightness: 200 Lux"
         self.ids.label3.text = "EUI64: "+sensor.EUI64
 
+    # function which is called regularly to update sensor value
     def display_sensorvalue(self, deviceview):
         devices = self.manager.get_screen("devices")
         device_list = devices.getDevices()

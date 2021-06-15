@@ -6,6 +6,7 @@ from kivy.properties import NumericProperty
 class UndefinedProgress(Image):
     angle = NumericProperty()
 
+
 class CreateRoomPopup(FloatLayout):
     def __init__(self, obj, **kwargs):
         super(CreateRoomPopup, self).__init__(**kwargs)
@@ -27,6 +28,6 @@ class DeleteRoomPopup(FloatLayout):
 class LoadPopup(FloatLayout):
     pass
 
+
 class AddDeviceFailedPopup(FloatLayout):
     pass
-
