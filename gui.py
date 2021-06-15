@@ -12,7 +12,7 @@ from kivy.uix.vkeyboard import VKeyboard
 
 from kivy.core.window import Window
 
-Window.size = (800, 460)
+#Window.size = (800, 460)
 Window.fullscreen = True
 #Window.top = -15
 

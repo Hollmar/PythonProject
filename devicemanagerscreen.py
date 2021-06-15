@@ -10,16 +10,17 @@ import kivy.core.window
 from popups import DeleteRoomPopup, AddDevicePopup, LoadPopup, AddDeviceFailedPopup, UndefinedProgress
 from controller import Controller
 from kivy.uix.vkeyboard import VKeyboard
+from kivy.clock import Clock
 import os
 
 if os.name == 'Windows':
     sun_picture = 'images\sun.png'
     router_picture = 'images\Router.jpg'
-    undefined_picture = 'images\loading.jpg'
+    undefined_picture = 'images\loading.png'
 else:
     sun_picture = 'images/sun.png'
     router_picture = 'images/Router.jpg'
-    undefined_picture = 'images/loading.jpg'
+    undefined_picture = 'images/loading.png'
 
 
 class DeviceManagerScreen(Screen):
@@ -65,23 +66,30 @@ class DeviceManagerScreen(Screen):
 #function to add a device uses addDevice function of Controller
     def add_device(self, eui64, name):
         if eui64 in self.get_current_room().device_dict:
-            print("EUI64 already exists")
             show = AddDeviceFailedPopup()
             popup_window = Popup(title="EUI64: " + eui64 + " already exists.", content=show,
                                  size_hint=(None, None), size=(400, 200))
             popup_window.open()
             show.ids.okButton.on_release = popup_window.dismiss
             return
+        elif len(eui64) != 16:
+            show = AddDeviceFailedPopup()
+            popup_window = Popup(title="EUI64: " + eui64 + " has wrong format.", content=show,
+                                 size_hint=(None, None), size=(400, 200))
+            popup_window.open()
+            show.ids.okButton.on_release = popup_window.dismiss
+            return
         self.add_undefined(eui64, name)
-        #self.c.addDevice(eui64)
+        self.c.addDevice(eui64)
         # testing different devices
-        """self.count += 1
+        """
         if self.count % 3 == 1:
             self.c.testAddDevice1(eui64)
         elif self.count % 3 == 2:
             self.c.testAddDevice2(eui64)
         else:
             self.c.testAddDevice3(eui64)
+        self.count += 1
         self.create_screen(self.get_current_room())"""
 
     def add_error(self, eui64):
@@ -126,12 +134,10 @@ class DeviceManagerScreen(Screen):
         deviceview.Widget = btn
 
 #function to update device as router
-    def add_router(self, eui64, name):
-        btn = Button(size=(self.width/6,self.height/5),size_hint=(None,None), font_size=20, text="\n\n\n" + name,
-                     background_disabled_normal=router_picture, disabled=True, id=eui64, color=(0, 0, 0, 1))
-        device = DeviceView(eui64, name, btn)
-        room = self.get_current_room()
-        room.device_dict.append(device)
+    def update_router(self, deviceview):
+        btn = Button(size=(self.width/6,self.height/5),size_hint=(None,None), font_size=16, text=deviceview.Name + "\n\n\n" + deviceview.EUI64,
+                     background_disabled_normal=router_picture, disabled=True, color=(0, 0, 0, 1))
+        deviceview.Widget = btn
 
 #function to change screen to brightnesssensor screen
     def brightness_change_screen(self, deviceView):
@@ -139,6 +145,7 @@ class DeviceManagerScreen(Screen):
         self.manager.transition.direction = "left"
         brightness = self.manager.get_screen("brightness")
         brightness.create_screen(deviceView)
+        deviceView.updateEvent = Clock.schedule_interval(lambda x: brightness.display_sensorvalue(deviceView), 0.1)
 
 #function to get a reference to the current room
     def get_current_room(self):
@@ -171,3 +178,6 @@ class DeviceManagerScreen(Screen):
         self.manager.current = "rooms"
         self.manager.transition.direction = "right"
         self.get_current_room().updateEvent.cancel()
+
+    def getDevices(self):
+        return self.c.getDevices()

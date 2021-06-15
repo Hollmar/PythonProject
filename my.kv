@@ -15,7 +15,7 @@ WindowManager:
         id:float_layout
         size: root.width, root.height
         Image:
-            source:'images\house.png'
+            source:'images/house.png'
             size_hint_x:0.05
             pos_hint:{"x":0.9,"y":0.44}
         Label:
@@ -59,7 +59,7 @@ WindowManager:
             pos_hint:{"x":0,"y":0.45}
             font_size: 25
         Image:
-            source:'images\couch.png'
+            source:'images/couch.png'
             size_hint_x:0.05
             pos_hint:{"x":0.9,"y":0.44}
         StackLayout:
@@ -78,7 +78,6 @@ WindowManager:
             pos_hint:{"x":0,"y":0}
             font_size:30
             size_hint: 0.2, 0.2
-            #background_normal: 'images\go_back.png'
             text: "Go Back"
             on_release:
                 root.go_back()
@@ -118,14 +117,13 @@ WindowManager:
             pos_hint: {"x":0, "y":-0.4}
             font_size:25
         Image:
-            source:'images\sun.png'
+            source:'images/sun.png'
             size_hint_x:0.05
             pos_hint:{"x":0.9,"y":0.44}
         Button:
             pos_hint:{"x":0,"y":0}
             font_size:30
             size_hint: 0.2, 0.2
-            #background_normal: 'images\go_back.png'
             text: "Go Back"
             on_release:
                 app.root.current = "devices"

@@ -12,6 +12,7 @@ class DeviceView:
         self.Name = name
         self.Widget = widget
         self.SensorValue = 0
+        self.UpdateEvent = 0
 
     def update_sensorvalue(self, newvalue):
         self.SensorValue = newvalue
